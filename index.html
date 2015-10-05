@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Platforms - Spaceshooter!</title>
+    <meta charset="utf-8">
+    <script src="phaser.js"></script>
+    <script type="text/javascript">
+        var levels = [];
+    </script>
+
+    <script type="text/javascript" src="js/boot.js"></script>
+    <script type="text/javascript" src="js/preloader.js"></script>
+    <script type="text/javascript" src="js/game.js"></script>
+    <script type="text/javascript" src="js/levelfinished.js"></script>
+    <script type="text/javascript" src="js/mainmenu.js"></script>
+    <script type="text/javascript" src="levels/level1.js"></script>
+    <script type="text/javascript" src="levels/level2.js"></script>
+</head>
+<body>
+
+    <div id="game"></div>
+
+    <script type="text/javascript">
+
+    var game = new Phaser.Game(640, 480, Phaser.AUTO, 'game');
+
+    //  The Google WebFont Loader will look for this object, so create it before loading the script.
+    WebFontConfig = {
+
+        //  'active' means all requested fonts have finished loading
+        //  We set a 1 second delay before calling 'createText'.
+        //  For some reason if we don't the browser cannot render the text the first time it's created.
+        active: function() {
+            game.fontLoaded = true;
+        },
+
+        //  The Google Fonts we want to load (specify as many as you like in the array)
+        google: { families: [ 'Roboto Slab:700,400:latin' ] }
+
+    };
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive')
+    {
+        start();
+    }
+    else
+    {
+        document.addEventListener('DOMContentLoaded', start, false);
+    }
+
+    function start () {
+
+        document.removeEventListener('DOMContentLoaded', start, false);
+
+        game.state.add('Boot', Spaceshooter.Boot);
+        game.state.add('Preloader', Spaceshooter.Preloader);
+        game.state.add('Game', Spaceshooter.Game);
+        game.state.add('LevelFinished', Spaceshooter.LevelFinished);
+        game.state.add('MainMenu', Spaceshooter.MainMenu);
+
+        game.state.start('Boot');
+    }
+
+    </script>
+
+</body>
+</html>
