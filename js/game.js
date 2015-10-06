@@ -116,8 +116,8 @@ Spaceshooter.Game.prototype = {
           this.ship.body.force.x = Math.cos(deltaAngle) * speed;
           this.ship.body.force.y = Math.sin(deltaAngle) * speed;
 
-          this.weapon.body.force.x = Math.cos(deltaAngle) * (speed+50)
-          this.weapon.body.force.y = Math.sin(deltaAngle) * (speed+50)
+          this.weapon.body.force.x = Math.cos(deltaAngle) * (speed+10)
+          this.weapon.body.force.y = Math.sin(deltaAngle) * (speed+10)
         }
 
     },
