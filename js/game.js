@@ -143,11 +143,8 @@ Spaceshooter.Game.prototype = {
 
             if (i === 0)
             {
-                // newRect.body.static = true;
                 //  Lock the two bodies together. The [0, 50] sets the distance apart (y: 80)
                 var constraint = game.physics.p2.createLockConstraint(ship.body, newRect.body);
-                // spring = game.physics.p2.createSpring(ship.body, newRect.body, 0, 30, 2, null, null, [16,16]);
-                // line.setTo(cow.x, cow.y, mouseBody.x, mouseBody.y);
             }
             else
             {
