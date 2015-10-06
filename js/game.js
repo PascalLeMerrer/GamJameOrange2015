@@ -64,7 +64,11 @@ Spaceshooter.Game.prototype = {
           this.ship.body.velocity.x = 0;
           this.ship.body.velocity.y = 0;
         } else {
-          this.game.physics.arcade.moveToPointer(this.ship, 400);
+          var speed = 400;
+          var deltaAngle = Math.atan2(game.input.mousePointer.y - this.ship.y, game.input.mousePointer.x - this.ship.x);
+          this.ship.body.rotation = deltaAngle + this.game.math.degToRad(90);
+          this.ship.body.force.x = Math.cos(deltaAngle) * speed;
+          this.ship.body.force.y = Math.sin(deltaAngle) * speed;
         }
     },
 
