@@ -22,6 +22,7 @@ Spaceshooter.Preloader.prototype = {
         this.load.image('ship', 'spaceshooter/PNG/ship.png');
         this.load.image('enemy1', 'spaceshooter/PNG/Enemies/enemy3.png');
         this.load.image('space', 'spaceshooter/backgrounds/darkpurple.png');
+        this.load.image('weapon', 'assets/beam0.png');
         this.load.spritesheet('chain', 'assets/chain.png', 16, 26);
         this.load.audio('twotones', 'spaceshooter/bonus/sfx_twoTone.ogg');
 
