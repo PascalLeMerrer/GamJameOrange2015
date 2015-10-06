@@ -153,7 +153,7 @@ Spaceshooter.Game.prototype = {
             {
                 //  Anchor the first one created
                 newRect.body.velocity.x = 400;      //  Give it a push :) just for fun
-                newRect.body.mass = length / i;     //  Reduce mass for evey rope element
+                newRect.body.mass = 0.1;     //  Reduce mass for evey rope element
             }
 
             //  After the first rectangle is created we can add the constraint
