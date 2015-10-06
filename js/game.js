@@ -7,7 +7,7 @@ Spaceshooter.Game = function () {
 
     this.context = null;
     this.levelText = null;
-    this.scoreText = null;
+    this.healthText = null;
 };
 
 Spaceshooter.Game.prototype = {
@@ -32,17 +32,33 @@ Spaceshooter.Game.prototype = {
         this.createChain(4, this.ship)
         this.game.world.bringToTop(this.ship);
 
+
+
         this.enemies = this.game.add.group();
+        this.collisionGroup = game.physics.p2.createCollisionGroup(this.enemies)
+        this.ship.body.setRectangle(40,40);
+        this.ship.health = 100;
+        game.physics.p2.setImpactEvents(true);
+        this.ship.body.setCollisionGroup(this.collisionGroup);
+        this.ship.body.collides(this.collisionGroup, this.onCollision, this);
+
         this.enemiesTimer = this.time.create(false);
         this.configEnemyTimer(5000);
         this.createEnemy();
 
         var style = { fill: "#ffffff", align: "center", fontSize: 32 };
-
-        this.scoreText = this.createText(20, 20, this.context.score || '000', style);
+        this.healthText = this.createText(20, 20, this.ship.health, style);
         this.levelText = this.createText(520, 20, "level " + (this.context.level || '1'), style);
+    },
 
-        this.arcade = new Phaser.Physics.Arcade(this.game);
+    onCollision: function(obj1, obj2) {
+        console.log(obj1.sprite.key)
+        if(obj1 == this.ship.body && obj2.sprite.key == 'enemy1') {
+          this.ship.damage(5);
+          this.healthText.setText(this.ship.health);
+        }
+
+        console.log(obj2.sprite.key)
     },
 
     configEnemyTimer: function(interval) {
@@ -69,6 +85,9 @@ Spaceshooter.Game.prototype = {
         var enemy = this.enemies.create(x, y, 'enemy1');
         this.game.physics.p2.enable(enemy, false);
         enemy.body.enableBodyDebug = true;
+        enemy.body.setRectangle(40,40);
+        enemy.body.setCollisionGroup(this.collisionGroup);
+        enemy.body.collides(this.collisionGroup);
     },
 
     createText: function(x, y, text, style, size)
@@ -100,7 +119,7 @@ Spaceshooter.Game.prototype = {
           this.weapon.body.force.x = Math.cos(deltaAngle) * (speed+50)
           this.weapon.body.force.y = Math.sin(deltaAngle) * (speed+50)
         }
-        
+
     },
 
     moveEnemy: function(enemy) {
