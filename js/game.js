@@ -8,6 +8,7 @@ Spaceshooter.Game = function () {
     this.context = null;
     this.levelText = null;
     this.healthText = null;
+    this.chainItems = null;
 };
 
 Spaceshooter.Game.prototype = {
@@ -15,7 +16,6 @@ Spaceshooter.Game.prototype = {
     init: function (context) {
 
         this.context = context;
-
         game.renderer.renderSession.roundPixels = true;
     },
 
@@ -28,19 +28,25 @@ Spaceshooter.Game.prototype = {
         this.ship = game.add.sprite(game.world.centerX, game.world.centerY, 'ship');
         game.physics.p2.enable(this.ship);
 
+        this.chainItems = this.game.add.group();
         //  Length, xAnchor, yAnchor
         this.createChain(4, this.ship)
         this.game.world.bringToTop(this.ship);
+
+
+        game.physics.p2.setImpactEvents(true);
 
 
 
         this.enemies = this.game.add.group();
         this.collisionGroup = game.physics.p2.createCollisionGroup(this.enemies)
         this.ship.body.setRectangle(40,40);
-        this.ship.health = 100;
-        game.physics.p2.setImpactEvents(true);
+        this.ship.health = 20;
         this.ship.body.setCollisionGroup(this.collisionGroup);
         this.ship.body.collides(this.collisionGroup, this.onCollision, this);
+
+        this.weapon.body.setCollisionGroup(this.collisionGroup);
+        this.weapon.body.collides(this.collisionGroup, this.onCollision, this);
 
         this.enemiesTimer = this.time.create(false);
         this.configEnemyTimer(5000);
@@ -52,13 +58,18 @@ Spaceshooter.Game.prototype = {
     },
 
     onCollision: function(obj1, obj2) {
-        console.log(obj1.sprite.key)
+        if(!this.ship.alive){
+          return;
+        }
         if(obj1 == this.ship.body && obj2.sprite.key == 'enemy1') {
-          this.ship.damage(5);
+          if( this.ship.health > 0){
+            this.ship.damage(5);
+          }
           this.healthText.setText(this.ship.health);
         }
-
-        console.log(obj2.sprite.key)
+        else if(obj1 == this.weapon.body && obj2.sprite.key == 'enemy1') {
+          obj2.sprite.kill();
+        }
     },
 
     configEnemyTimer: function(interval) {
@@ -116,7 +127,9 @@ Spaceshooter.Game.prototype = {
           this.ship.body.force.x = Math.cos(deltaAngle) * speed;
           this.ship.body.force.y = Math.sin(deltaAngle) * speed;
         }
-
+        if(this.ship.health <= 0) {
+          this.die()
+        }
     },
 
     moveEnemy: function(enemy) {
@@ -129,17 +142,10 @@ Spaceshooter.Game.prototype = {
 
 
     die: function(){
+        this.weapon.kill();
         this.sound.play('death');
-        this.ship.kill();
-        this.context.lives--;
-        if(this.context.lives === 0) {
-            this.context.isGameOver = true;
-            this.context.lives = 3;
-            this.state.start('LevelFinished', true, false, this.context);
-        }
-        else {
-            this.state.start('LevelFinished', true, false, this.context);
-        }
+        this.state.start('LevelFinished', true, false, this.context);
+        this.chainItems.callAll('kill');
     },
 
     levelUp: function() {
@@ -161,7 +167,7 @@ Spaceshooter.Game.prototype = {
     createChain: function(length, ship) {
 
         var lastRect;
-        var height = 20;        //  Height for the physics body - your image height is 8px
+        var height = 100;        //  Height for the physics body - your image height is 8px
         var width = 16;         //  This is the width for the physics body. If too small the rectangles will get scrambled together.
         var maxForce = 20000;   //  The force that holds the rectangles together.
 
@@ -180,7 +186,7 @@ Spaceshooter.Game.prototype = {
                 newRect = game.add.sprite(x, y, 'chain', 0);
                 lastRect.bringToTop();
             }
-
+            this.chainItems.add(newRect);
             //  Enable physicsbody
             game.physics.p2.enable(newRect, false);
 
