@@ -35,30 +35,39 @@ Spaceshooter.Game.prototype = {
 
         this.enemies = this.game.add.group();
         this.enemiesTimer = this.time.create(false);
-        this.createEnemyTime(2000);
+        this.configEnemyTimer(5000);
+        this.createEnemy();
 
-/*        for (var i = 0; i < 10; i++) {
-            var enemy = this.enemies.create(game.rnd.integerInRange(0, 640), game.rnd.integerInRange(0, 480), 'enemy1');
-            this.game.physics.p2.enable(enemy, false);
-            enemy.body.enableBodyDebug = true;
-        }
-*/
         var style = { fill: "#ffffff", align: "center", fontSize: 32 };
 
         this.scoreText = this.createText(20, 20, this.context.score || '000', style);
         this.levelText = this.createText(520, 20, "level " + (this.context.level || '1'), style);
 
+        this.arcade = new Phaser.Physics.Arcade(this.game);
     },
 
-    createEnemyTime: function(interval) {
+    configEnemyTimer: function(interval) {
         this.enemiesTimer.removeAll();
         this.enemiesTimer.loop(interval, this.createEnemy, this);
         this.enemiesTimer.start();
     },
 
+    randomBorderPosition: function() {
+        var randx = function() {return this.game.rnd.integerInRange(0, 640);}
+        var randy = function() {return this.game.rnd.integerInRange(0, 480);}
+        var border = this.game.rnd.integerInRange(1, 4);
+        if (border==1) { return {x:randx(), y:0}   }
+        if (border==2) { return {x:randx(), y:480} }
+        if (border==3) { return {x:0, y:randy()}   }
+        if (border==4) { return {x:640, y:randy()} }
+    },
+
+
     createEnemy: function() {
-        var x = this.game.rnd.integerInRange(0, 640);
-        var y = this.game.rnd.integerInRange(0, 480);
+        var pos = this.randomBorderPosition();
+        var x = pos.x;
+        var y = pos.y;
+        console.log('x'+x+' '+y)
         var enemy = this.enemies.create(x, y, 'enemy1');
         this.game.physics.p2.enable(enemy, false);
         enemy.body.enableBodyDebug = true;        
@@ -73,9 +82,6 @@ Spaceshooter.Game.prototype = {
     },
 
     update: function () {
-
-
-
         this.enemies.forEachAlive(this.moveEnemy, this);  //make enemies accelerate to ship
 
         //  if it's overlapping the mouse, don't move any more
@@ -93,6 +99,7 @@ Spaceshooter.Game.prototype = {
           this.ship.body.force.x = Math.cos(deltaAngle) * speed;
           this.ship.body.force.y = Math.sin(deltaAngle) * speed;
         }
+        
     },
 
     moveEnemy: function(enemy) {
@@ -102,6 +109,7 @@ Spaceshooter.Game.prototype = {
         enemy.body.force.x = Math.cos(deltaAngle) * speed;
         enemy.body.force.y = Math.sin(deltaAngle) * speed;
     },
+
 
     die: function(){
         this.sound.play('death');
