@@ -31,6 +31,8 @@ Spaceshooter.Game.prototype = {
         //  Length, xAnchor, yAnchor
         this.createChain(4, this.ship)
 
+        this.game.world.bringToTop(this.ship);
+
         this.enemies = this.game.add.group();
         this.enemiesTimer = this.time.create(false);
         this.createEnemyTime(2000);
