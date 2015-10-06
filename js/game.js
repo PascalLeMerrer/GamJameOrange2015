@@ -22,6 +22,11 @@ Spaceshooter.Game.prototype = {
     create: function () {
         this.sound.play("twotones");
         this.background = this.add.tileSprite(0, 0, 640, 480, 'space');
+        this.sounds = {}
+
+        this.sounds.death = game.add.audio('death');
+        this.sounds.mydeath = game.add.audio('mydeath');
+        this.sounds.touched = game.add.audio('touched');
 
         game.physics.startSystem(Phaser.Physics.P2JS);
 
@@ -66,6 +71,7 @@ Spaceshooter.Game.prototype = {
             this.ship.damage(5);
           }
           this.healthText.setText(this.ship.health);
+          this.sounds.touched.play();
         }
         else if(obj1 == this.weapon.body && obj2.sprite.key == 'enemy1') {
           obj2.sprite.kill();
@@ -126,6 +132,9 @@ Spaceshooter.Game.prototype = {
           this.ship.body.rotation = deltaAngle + game.math.degToRad(90);
           this.ship.body.force.x = Math.cos(deltaAngle) * speed;
           this.ship.body.force.y = Math.sin(deltaAngle) * speed;
+
+          this.weapon.body.force.x = Math.cos(deltaAngle) * (speed+10)
+          this.weapon.body.force.y = Math.sin(deltaAngle) * (speed+10)
         }
         if(this.ship.health <= 0) {
           this.die()
@@ -201,8 +210,8 @@ Spaceshooter.Game.prototype = {
             else
             {
                 //  Anchor the first one created
-                newRect.body.velocity.x = 400;      //  Give it a push :) just for fun
-                newRect.body.mass = 0.1;     //  Reduce mass for evey rope element
+                newRect.body.velocity.x = 10;      //  Give it a push :) just for fun
+                newRect.body.mass = 0.01;     //  Reduce mass for evey rope element
             }
 
             //  After the first rectangle is created we can add the constraint
