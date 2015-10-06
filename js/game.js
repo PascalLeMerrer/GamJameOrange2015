@@ -163,7 +163,13 @@ Spaceshooter.Game.prototype = {
             }
 
             lastRect = newRect;
+
         }
+
+        this.weapon = game.add.sprite(lastRect.x + 10, lastRect.y + 7, 'weapon');
+        game.physics.p2.enable(this.weapon);
+        game.physics.p2.createLockConstraint(this.weapon.body, lastRect.body, [0, 0], 0);
+        this.weapon.body.rotation = 90;
       }
 
 };
