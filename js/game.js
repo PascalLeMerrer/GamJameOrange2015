@@ -16,25 +16,25 @@ Spaceshooter.Game.prototype = {
 
         this.context = context;
 
-        this.game.renderer.renderSession.roundPixels = true;
+        game.renderer.renderSession.roundPixels = true;
     },
 
     create: function () {
         this.sound.play("twotones");
         this.background = this.add.tileSprite(0, 0, 640, 480, 'space');
 
-        this.game.physics.startSystem(Phaser.Physics.P2JS);
+        game.physics.startSystem(Phaser.Physics.P2JS);
 
-        this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'ship');
-        this.game.physics.p2.enable(this.ship);
+        this.ship = game.add.sprite(game.world.centerX, game.world.centerY, 'ship');
+        game.physics.p2.enable(this.ship);
 
         //  Length, xAnchor, yAnchor
         this.createChain(4, this.ship)
 
-        this.enemies = this.game.add.group();
+        this.enemies = game.add.group();
         for (var i = 0; i < 10; i++) {
             var enemy = this.enemies.create(game.rnd.integerInRange(0, 640), game.rnd.integerInRange(0, 480), 'enemy1');
-            this.game.physics.p2.enable(enemy, false);
+            game.physics.p2.enable(enemy, false);
             enemy.body.enableBodyDebug = true;
         }
 
@@ -58,7 +58,7 @@ Spaceshooter.Game.prototype = {
         this.enemies.forEachAlive(this.moveEnemy, this);  //make enemies accelerate to ship
 
         //  if it's overlapping the mouse, don't move any more
-        var mousePosition = this.game.input.mousePointer.position;
+        var mousePosition = game.input.mousePointer.position;
         var mouseHovered = game.physics.p2.hitTest(mousePosition, [ this.ship ]);
 
         if (mouseHovered.length > 0)
@@ -68,7 +68,7 @@ Spaceshooter.Game.prototype = {
         } else {
           var speed = 400;
           var deltaAngle = Math.atan2(game.input.mousePointer.y - this.ship.y, game.input.mousePointer.x - this.ship.x);
-          this.ship.body.rotation = deltaAngle + this.game.math.degToRad(90);
+          this.ship.body.rotation = deltaAngle + game.math.degToRad(90);
           this.ship.body.force.x = Math.cos(deltaAngle) * speed;
           this.ship.body.force.y = Math.sin(deltaAngle) * speed;
         }
@@ -76,7 +76,7 @@ Spaceshooter.Game.prototype = {
 
     moveEnemy: function(enemy) {
         var deltaAngle = Math.atan2(this.ship.y - enemy.y, this.ship.x - enemy.x);
-        enemy.body.rotation = deltaAngle + this.game.math.degToRad(90);
+        enemy.body.rotation = deltaAngle + game.math.degToRad(90);
         if (typeof speed === 'undefined') { speed = 60; }
         enemy.body.force.x = Math.cos(deltaAngle) * speed;
         enemy.body.force.y = Math.sin(deltaAngle) * speed;
