@@ -76,6 +76,7 @@ Spaceshooter.Game.prototype = {
         }
         else if(obj1 == this.weapon.body && obj2.sprite.key == 'enemy1') {
           obj2.sprite.kill();
+          this.sounds.death.play();
         }
     },
 
@@ -150,8 +151,9 @@ Spaceshooter.Game.prototype = {
 
     die: function(){
         game.paused = true;
-        this.sound.play('death');
         this.isGameOver = true;
+        this.weapon.kill();
+        this.sounds.mydeath.play();
         this.state.start('LevelFinished', true, false, this.context);
         game.paused = false;
     },
