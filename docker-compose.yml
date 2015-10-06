@@ -1,0 +1,7 @@
+gamejam:
+   image : tomcat:latest
+   ports :
+     - "10080:8080"
+   volumes :
+     - .:/usr/local/tomcat/webapps/ROOT
+
