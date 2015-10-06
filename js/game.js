@@ -41,6 +41,16 @@ Spaceshooter.Game.prototype = {
         this.scoreText = this.createText(20, 20, this.context.score || '000', style);
         this.levelText = this.createText(520, 20, "level " + (this.context.level || '1'), style);
 
+        this.collisionGroup = game.physics.p2.createCollisionGroup(this.enemies)
+        this.ship.body.setRectangle(40,40);
+        game.physics.p2.setImpactEvents(true);
+        this.ship.body.setCollisionGroup(this.collisionGroup);
+        this.ship.body.collides(this.collisionGroup, this.onCollision, this);
+    },
+
+    onCollision: function(obj1, obj2) {
+        console.log(obj1.sprite.key)
+        console.log(obj2.sprite.key)
     },
 
     createEnemyTime: function(interval) {
@@ -55,6 +65,9 @@ Spaceshooter.Game.prototype = {
         var enemy = this.enemies.create(x, y, 'enemy1');
         this.game.physics.p2.enable(enemy, false);
         enemy.body.enableBodyDebug = true;
+        enemy.body.setRectangle(40,40);
+        enemy.body.setCollisionGroup(this.collisionGroup);
+        enemy.body.collides(this.collisionGroup);
     },
 
     createText: function(x, y, text, style, size)
@@ -66,8 +79,6 @@ Spaceshooter.Game.prototype = {
     },
 
     update: function () {
-
-
 
         this.enemies.forEachAlive(this.moveEnemy, this);  //make enemies accelerate to ship
 
