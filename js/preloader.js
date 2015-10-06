@@ -19,7 +19,6 @@ Spaceshooter.Preloader.prototype = {
 
         this.preloadBar = this.add.sprite(120, 260, 'preload');
         this.load.setPreloadSprite(this.preloadBar);
-        // this.load.spritesheet('coin', 'assets/spinning_coin_gold.png', 32, 32);
         this.load.image('ship', 'spaceshooter/PNG/ship.png');
         this.load.image('enemy1', 'spaceshooter/PNG/Enemies/enemy3.png');
         this.load.image('space', 'spaceshooter/backgrounds/darkpurple.png');

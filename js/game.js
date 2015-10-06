@@ -23,19 +23,17 @@ Spaceshooter.Game.prototype = {
         this.sound.play("twotones");
         this.background = this.add.tileSprite(0, 0, 640, 480, 'space');
 
+        this.game.physics.startSystem(Phaser.Physics.P2JS);
+
         this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'ship');
-        this.ship.anchor.x = 0.5;
-        this.ship.anchor.y = 0.5;
-        this.game.physics.enable(this.ship, Phaser.Physics.ARCADE);
-        this.ship.body.allowRotation = true;
+        this.game.physics.p2.enable(this.ship);
+
 
         this.enemies = this.game.add.group();
         for (var i = 0; i < 10; i++) {
-            var bullet = this.enemies.create(game.rnd.integerInRange(0, 640), game.rnd.integerInRange(0, 480), 'enemy1');
-            this.game.physics.enable(bullet, Phaser.Physics.ARCADE);
-            bullet.body.allowRotation = true;
-            bullet.anchor.x = 0.5;
-            bullet.anchor.y = 0.5;
+            var enemy = this.enemies.create(game.rnd.integerInRange(0, 640), game.rnd.integerInRange(0, 480), 'enemy1');
+            this.game.physics.p2.enable(enemy, false);
+            enemy.body.enableBodyDebug = true;
         }
 
         var style = { fill: "#ffffff", align: "center", fontSize: 32 };
@@ -58,30 +56,24 @@ Spaceshooter.Game.prototype = {
         this.enemies.forEachAlive(this.moveEnemy, this);  //make enemies accelerate to ship
 
         //  if it's overlapping the mouse, don't move any more
-        if (Phaser.Rectangle.contains(this.ship.body, this.game.input.x, this.game.input.y))
+        var mousePosition = this.game.input.mousePointer.position;
+        var mouseHovered = game.physics.p2.hitTest(mousePosition, [ this.ship ]);
+
+        if (mouseHovered.length > 0)
         {
-            this.ship.body.velocity.setTo(0, 0);
+          this.ship.body.velocity.x = 0;
+          this.ship.body.velocity.y = 0;
         } else {
           this.game.physics.arcade.moveToPointer(this.ship, 400);
         }
     },
 
-    moveEnemy: function(bullet) {
-        var angle = Math.atan2(this.ship.y - bullet.y, this.ship.x - bullet.x) + this.game.math.degToRad(90);
-        bullet.rotation = angle;
-        bullet.body.angle = angle;
-
-        var velocityX = (this.ship.x - bullet.x);
-        var velocityY = (this.ship.y - bullet.y);
-        var speedRatio = 10;
-        var maxVelocity = Math.max(velocityX, velocityY);
-        if (maxVelocity > 100) {
-          speedRatio = 0.3;
-        }
-        else if (maxVelocity > 50) {
-          speedRatio = 0.5;
-        }
-        bullet.body.velocity.setTo(velocityX, velocityY);
+    moveEnemy: function(enemy) {
+        var deltaAngle = Math.atan2(this.ship.y - enemy.y, this.ship.x - enemy.x);
+        enemy.body.rotation = deltaAngle + this.game.math.degToRad(90);
+        if (typeof speed === 'undefined') { speed = 60; }
+        enemy.body.force.x = Math.cos(deltaAngle) * speed;
+        enemy.body.force.y = Math.sin(deltaAngle) * speed;
     },
 
     die: function(){
