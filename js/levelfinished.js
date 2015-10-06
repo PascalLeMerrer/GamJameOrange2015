@@ -17,8 +17,9 @@ Spaceshooter.LevelFinished.prototype = {
     },
 
     create: function () {
+        this.stage.backgroundColor = '#2f9acc';
 
-        this.sky = this.add.tileSprite(0, 0, 640, 480, 'clouds');
+        this.sky = this.add.tileSprite(0, 0, 640, 480, 'space');
 
         this.endText = this.createText(this.camera.view.width / 2,
                                        this.camera.view.height / 2,
@@ -30,7 +31,7 @@ Spaceshooter.LevelFinished.prototype = {
 
         if (this.context.isGameOver)
         {
-            this.endText.setText("Game Over\nFinal score: " + this.context.score);
+            this.endText.setText("Game Over\nscore: " + this.context.score);
             this.instructions.setText("Press Enter to restart");
         }
         else if (this.context.isGameFinished)

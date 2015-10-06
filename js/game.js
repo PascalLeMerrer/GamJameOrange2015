@@ -8,7 +8,6 @@ Spaceshooter.Game = function () {
     this.context = null;
     this.levelText = null;
     this.healthText = null;
-    this.chainItems = null;
 };
 
 Spaceshooter.Game.prototype = {
@@ -33,7 +32,6 @@ Spaceshooter.Game.prototype = {
         this.ship = game.add.sprite(game.world.centerX, game.world.centerY, 'ship');
         game.physics.p2.enable(this.ship);
 
-        this.chainItems = this.game.add.group();
         //  Length, xAnchor, yAnchor
         this.createChain(4, this.ship)
         this.game.world.bringToTop(this.ship);
@@ -69,6 +67,9 @@ Spaceshooter.Game.prototype = {
         if(obj1 == this.ship.body && obj2.sprite.key == 'enemy1') {
           if( this.ship.health > 0){
             this.ship.damage(5);
+            if(this.ship.health <= 0) {
+              this.die();
+            }
           }
           this.healthText.setText(this.ship.health);
           this.sounds.touched.play();
@@ -136,9 +137,6 @@ Spaceshooter.Game.prototype = {
           this.weapon.body.force.x = Math.cos(deltaAngle) * (speed+10)
           this.weapon.body.force.y = Math.sin(deltaAngle) * (speed+10)
         }
-        if(this.ship.health <= 0) {
-          this.die()
-        }
     },
 
     moveEnemy: function(enemy) {
@@ -151,10 +149,11 @@ Spaceshooter.Game.prototype = {
 
 
     die: function(){
-        this.weapon.kill();
+        game.paused = true;
         this.sound.play('death');
+        this.isGameOver = true;
         this.state.start('LevelFinished', true, false, this.context);
-        this.chainItems.callAll('kill');
+        game.paused = false;
     },
 
     levelUp: function() {
@@ -195,7 +194,6 @@ Spaceshooter.Game.prototype = {
                 newRect = game.add.sprite(x, y, 'chain', 0);
                 lastRect.bringToTop();
             }
-            this.chainItems.add(newRect);
             //  Enable physicsbody
             game.physics.p2.enable(newRect, false);
 
