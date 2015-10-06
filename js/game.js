@@ -66,7 +66,6 @@ Spaceshooter.Game.prototype = {
         var pos = this.randomBorderPosition();
         var x = pos.x;
         var y = pos.y;
-        console.log('x'+x+' '+y)
         var enemy = this.enemies.create(x, y, 'enemy1');
         this.game.physics.p2.enable(enemy, false);
         enemy.body.enableBodyDebug = true;
