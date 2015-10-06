@@ -22,6 +22,11 @@ Spaceshooter.Game.prototype = {
     create: function () {
         this.sound.play("twotones");
         this.background = this.add.tileSprite(0, 0, 640, 480, 'space');
+        this.sounds = {}
+
+        this.sounds.death = game.add.audio('death');
+        this.sounds.mydeath = game.add.audio('mydeath');
+        this.sounds.touched = game.add.audio('touched');
 
         game.physics.startSystem(Phaser.Physics.P2JS);
 
@@ -56,6 +61,7 @@ Spaceshooter.Game.prototype = {
         if(obj1 == this.ship.body && obj2.sprite.key == 'enemy1') {
           this.ship.damage(5);
           this.healthText.setText(this.ship.health);
+          this.sounds.touched.play();
         }
 
         console.log(obj2.sprite.key)
