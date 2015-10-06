@@ -177,10 +177,14 @@ Spaceshooter.Game.prototype = {
 
         }
 
-        this.weapon = game.add.sprite(lastRect.x + 10, lastRect.y + 7, 'weapon');
-        game.physics.p2.enable(this.weapon);
-        game.physics.p2.createLockConstraint(this.weapon.body, lastRect.body, [0, 0], 0);
-        this.weapon.body.rotation = 90;
-      }
+        this.createWeapon(lastRect);
+      },
 
+      createWeapon: function(chainEnd) {
+        this.weapon = game.add.sprite(chainEnd.x + 10, chainEnd.y + 7, 'weapon');
+        game.physics.p2.enable(this.weapon);
+        game.physics.p2.createLockConstraint(this.weapon.body, chainEnd.body, [0, 0], 0);
+        this.weapon.body.rotation = 90;
+        this.weapon.body.mass = 0.1;
+      }
 };
