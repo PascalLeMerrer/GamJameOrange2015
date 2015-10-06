@@ -28,6 +28,8 @@ Spaceshooter.Game.prototype = {
         this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'ship');
         this.game.physics.p2.enable(this.ship);
 
+        //  Length, xAnchor, yAnchor
+        this.createChain(4, this.ship)
 
         this.enemies = this.game.add.group();
         for (var i = 0; i < 10; i++) {
@@ -108,6 +110,60 @@ Spaceshooter.Game.prototype = {
         }
         this.context.isGameOver = false;
         this.state.start('LevelFinished', true, false, this.context);
-    }
+    },
+
+    createChain: function(length, ship) {
+
+        var lastRect;
+        var height = 20;        //  Height for the physics body - your image height is 8px
+        var width = 16;         //  This is the width for the physics body. If too small the rectangles will get scrambled together.
+        var maxForce = 20000;   //  The force that holds the rectangles together.
+
+        for (var i = 0; i <= length; i++)
+        {
+            var x = ship.x;                    //  All rects are on the same x position
+            var y = ship.y + (i * height);     //  Every new rect is positioned below the last
+
+            if (i % 2 === 0)
+            {
+                //  Add sprite (and switch frame every 2nd time)
+                newRect = game.add.sprite(x, y, 'chain', 1);
+            }
+            else
+            {
+                newRect = game.add.sprite(x, y, 'chain', 0);
+                lastRect.bringToTop();
+            }
+
+            //  Enable physicsbody
+            game.physics.p2.enable(newRect, false);
+
+            //  Set custom rectangle
+            newRect.body.setRectangle(width, height);
+
+            if (i === 0)
+            {
+                // newRect.body.static = true;
+                //  Lock the two bodies together. The [0, 50] sets the distance apart (y: 80)
+                var constraint = game.physics.p2.createLockConstraint(ship.body, newRect.body);
+                // spring = game.physics.p2.createSpring(ship.body, newRect.body, 0, 30, 2, null, null, [16,16]);
+                // line.setTo(cow.x, cow.y, mouseBody.x, mouseBody.y);
+            }
+            else
+            {
+                //  Anchor the first one created
+                newRect.body.velocity.x = 400;      //  Give it a push :) just for fun
+                newRect.body.mass = length / i;     //  Reduce mass for evey rope element
+            }
+
+            //  After the first rectangle is created we can add the constraint
+            if (lastRect)
+            {
+                game.physics.p2.createRevoluteConstraint(newRect, [0, -10], lastRect, [0, 10], maxForce);
+            }
+
+            lastRect = newRect;
+        }
+      }
 
 };
