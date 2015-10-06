@@ -96,6 +96,9 @@ Spaceshooter.Game.prototype = {
           this.ship.body.rotation = deltaAngle + game.math.degToRad(90);
           this.ship.body.force.x = Math.cos(deltaAngle) * speed;
           this.ship.body.force.y = Math.sin(deltaAngle) * speed;
+
+          this.weapon.body.force.x = Math.cos(deltaAngle) * (speed+50)
+          this.weapon.body.force.y = Math.sin(deltaAngle) * (speed+50)
         }
         
     },
@@ -176,8 +179,8 @@ Spaceshooter.Game.prototype = {
             else
             {
                 //  Anchor the first one created
-                newRect.body.velocity.x = 400;      //  Give it a push :) just for fun
-                newRect.body.mass = 0.1;     //  Reduce mass for evey rope element
+                newRect.body.velocity.x = 10;      //  Give it a push :) just for fun
+                newRect.body.mass = 0.01;     //  Reduce mass for evey rope element
             }
 
             //  After the first rectangle is created we can add the constraint
