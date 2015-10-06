@@ -30,19 +30,31 @@ Spaceshooter.Game.prototype = {
 
         //  Length, xAnchor, yAnchor
         this.createChain(4, this.ship)
+        this.game.world.bringToTop(this.ship);
 
-        this.enemies = game.add.group();
-        for (var i = 0; i < 10; i++) {
-            var enemy = this.enemies.create(game.rnd.integerInRange(0, 640), game.rnd.integerInRange(0, 480), 'enemy1');
-            game.physics.p2.enable(enemy, false);
-            enemy.body.enableBodyDebug = true;
-        }
+        this.enemies = this.game.add.group();
+        this.enemiesTimer = this.time.create(false);
+        this.createEnemyTime(2000);
 
         var style = { fill: "#ffffff", align: "center", fontSize: 32 };
 
         this.scoreText = this.createText(20, 20, this.context.score || '000', style);
         this.levelText = this.createText(520, 20, "level " + (this.context.level || '1'), style);
 
+    },
+
+    createEnemyTime: function(interval) {
+        this.enemiesTimer.removeAll();
+        this.enemiesTimer.loop(interval, this.createEnemy, this);
+        this.enemiesTimer.start();
+    },
+
+    createEnemy: function() {
+        var x = this.game.rnd.integerInRange(0, 640);
+        var y = this.game.rnd.integerInRange(0, 480);
+        var enemy = this.enemies.create(x, y, 'enemy1');
+        this.game.physics.p2.enable(enemy, false);
+        enemy.body.enableBodyDebug = true;
     },
 
     createText: function(x, y, text, style, size)
@@ -54,6 +66,8 @@ Spaceshooter.Game.prototype = {
     },
 
     update: function () {
+
+
 
         this.enemies.forEachAlive(this.moveEnemy, this);  //make enemies accelerate to ship
 
