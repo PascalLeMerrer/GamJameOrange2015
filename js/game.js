@@ -32,20 +32,22 @@ Spaceshooter.Game.prototype = {
         this.createChain(4, this.ship)
         this.game.world.bringToTop(this.ship);
 
-        this.enemies = this.game.add.group();
-        this.enemiesTimer = this.time.create(false);
-        this.createEnemyTime(2000);
 
         var style = { fill: "#ffffff", align: "center", fontSize: 32 };
 
         this.scoreText = this.createText(20, 20, this.context.score || '000', style);
         this.levelText = this.createText(520, 20, "level " + (this.context.level || '1'), style);
 
+        this.enemies = this.game.add.group();
         this.collisionGroup = game.physics.p2.createCollisionGroup(this.enemies)
         this.ship.body.setRectangle(40,40);
         game.physics.p2.setImpactEvents(true);
         this.ship.body.setCollisionGroup(this.collisionGroup);
         this.ship.body.collides(this.collisionGroup, this.onCollision, this);
+
+        this.enemiesTimer = this.time.create(false);
+        this.configEnemyTimer(5000);
+        this.createEnemy();
     },
 
     onCollision: function(obj1, obj2) {
@@ -53,15 +55,27 @@ Spaceshooter.Game.prototype = {
         console.log(obj2.sprite.key)
     },
 
-    createEnemyTime: function(interval) {
+    configEnemyTimer: function(interval) {
         this.enemiesTimer.removeAll();
         this.enemiesTimer.loop(interval, this.createEnemy, this);
         this.enemiesTimer.start();
     },
 
+    randomBorderPosition: function() {
+        var randx = function() {return this.game.rnd.integerInRange(0, 640);}
+        var randy = function() {return this.game.rnd.integerInRange(0, 480);}
+        var border = this.game.rnd.integerInRange(1, 4);
+        if (border==1) { return {x:randx(), y:0}   }
+        if (border==2) { return {x:randx(), y:480} }
+        if (border==3) { return {x:0, y:randy()}   }
+        if (border==4) { return {x:640, y:randy()} }
+    },
+
+
     createEnemy: function() {
-        var x = this.game.rnd.integerInRange(0, 640);
-        var y = this.game.rnd.integerInRange(0, 480);
+        var pos = this.randomBorderPosition();
+        var x = pos.x;
+        var y = pos.y;
         var enemy = this.enemies.create(x, y, 'enemy1');
         this.game.physics.p2.enable(enemy, false);
         enemy.body.enableBodyDebug = true;
@@ -79,7 +93,6 @@ Spaceshooter.Game.prototype = {
     },
 
     update: function () {
-
         this.enemies.forEachAlive(this.moveEnemy, this);  //make enemies accelerate to ship
 
         //  if it's overlapping the mouse, don't move any more
@@ -97,6 +110,7 @@ Spaceshooter.Game.prototype = {
           this.ship.body.force.x = Math.cos(deltaAngle) * speed;
           this.ship.body.force.y = Math.sin(deltaAngle) * speed;
         }
+
     },
 
     moveEnemy: function(enemy) {
@@ -106,6 +120,7 @@ Spaceshooter.Game.prototype = {
         enemy.body.force.x = Math.cos(deltaAngle) * speed;
         enemy.body.force.y = Math.sin(deltaAngle) * speed;
     },
+
 
     die: function(){
         this.sound.play('death');
